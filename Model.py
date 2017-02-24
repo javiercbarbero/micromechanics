@@ -108,7 +108,22 @@ class Model:
 		self.job.submit(consistencyChecking=OFF)
 		self.job.waitForCompletion()
 		
-	def Setup(self, AlphaL, AlphaT):
+	def Setup(self, 
+		Aa = 38.1095, 
+		Ba = 0.1421, 
+		Ca = -1.0461e-4, 
+		Ae = 5032.7732,
+		Be = -16.7561,
+		Ce = 0.0251,
+		Av = 0.3659,
+		Bv = -1.1108e-4,
+		Cv = -8.608e-7,
+		VF = 0.48,
+		Trmax = 120,
+		Trmin = -100,
+		Tref = 177,
+		Tend = -200):
+		
 		#print "Vf %f P0 %f P1 %f P2 %f" % (Vf, P0, P1, P2)
 		#print "AlphaL %f AlphaT" % (AlphaL, AlphaT)
 		
@@ -125,27 +140,10 @@ class Model:
 		##################################################################################
 		# VARIABLES
 		rf=3.5 #micrometros
-		VF = 0.48 # Volume fraction
 		a2 = sqrt((pi*(rf**2))/(2*sqrt(3)*VF));
 		a3 = sqrt(3)*a2;
 		a1 = a2/4;
 		
-		Trmax = 120
-		Trmin = -100
-		Tref = 177
-		Tend = -200
-				
-		Aa = 38.1095
-		Ba = 0.1421
-		Ca = -1.0461e-4
-		
-		Ae = 5032.7732
-		Be = -16.7561
-		Ce = 0.0251
-		
-		Av = 0.3659
-		Bv = -1.1108e-4
-		Cv = -8.608e-7
 		
 		mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=50.0)
 		mdb.models['Model-1'].sketches['__profile__'].rectangle(point1=(0.0, 0.0), 
