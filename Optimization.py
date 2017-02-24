@@ -4,32 +4,42 @@ from numpy import array, asarray, float64, int32, zeros
 
 from scipy.optimize import fmin
 
+import PyFilescripttotal
+reload(PyFilescripttotal)
 from PyFilescripttotal import Iteration
 
-
-#Gmc = 2 # Toughness fracture (initial value)
-#F2t = 30 # Transverse strength in-situ (initial value)
-
-#lb = [1.5, 20] # Initial bound constraint for Gmc and F2t respectively
-#ub = [30.5, 141] # Final bound constraint for Gmc and F2t respectively
-"""
-def func(inp, a, b):
-	X = inp[0]
-	Y = inp[1]
-	fun = a*X**2-b*X+2 
-	return fun
-"""
+def CalcPoly(T, A, B, C, D = 0):
+	return (A + B * T + C * T * T + D * T * T * T);
 
 # My input variables to optimize
-# For fiber: [AlphaLongitudinal, AlphaTransversal]
-x0 = array([-1.46e-06, 12.5e-06])
+Aa = 38.1095 
+Ba = 0.1421
+Ca = -1.0461e-4 
+		
+x0 = array([Aa, Ba, Ca])
 #mybounds = [(0,1), (0,2)]
 
-E = 37876
-Area = 13.3
-l_o = 135
+alphalongitudinal = {}
+alphatransverse = {}
 
-xopt,fopt,iter,funcalls, warnflag,allvecs = fmin(Iteration, x0, args = (E, Area, l_o), xtol=1e-6,ftol=1e-6, maxiter=None, maxfun=None, full_output=True, retall=True)
+calculateParametersFromPoly = True #False
+
+if calculateParametersFromPoly:
+	Temperatures = [93, 66, 39, 24, 12, -15, -42, -70, -96, -123, -150]
+	
+	for t in Temperatures:
+		alphalongitudinal[t] = CalcPoly(t, -0.5802, 2e-4, 3e-6)
+		
+	for t in Temperatures:
+		alphatransverse[t] = CalcPoly(t, 20.619, 0.0154, -2.1e-4, 8e-7)
+else:
+	alphalongitudinal[93] = 123
+	alphalongitudinal[24] = 123
+	
+	alphatransverse[93] = 123
+	alphatransverse[24] = 123
+
+xopt,fopt,iter,funcalls, warnflag,allvecs = fmin(Iteration, x0, args = (alphalongitudinal, alphatransverse), xtol=1e-3,ftol=1e-3, maxiter=None, maxfun=None, full_output=True, retall=True)
 
 print(xopt)
 print(fopt)
