@@ -68,21 +68,23 @@ class Model:
 			alpha2.insert(n,alpha22) 
 			alpha33 = Avg_Strain[2]#y-component,3-direction in Fig. 6.5
 			alpha3.insert(n,alpha33) 
-			temp.insert(n, 177 - n)
+			temp.insert(n, self.Tref - n)
 		
-		alpha1t = [0]
-		alpha2t = [0]
-		alpha3t = [0]
+		alpha1t={}
+		alpha2t={}
+		alpha3t={}	
+		alpha1t[self.Tref] = 0
+		alpha2t[self.Tref] = 0
+		alpha3t[self.Tref] = 0
 		for i in range(1, len(temp)):
-			alpha1t.insert(i, -alpha1[i] + alpha1[i - 1])
-			alpha2t.insert(i, -alpha2[i] + alpha2[i - 1])
-			alpha3t.insert(i, -alpha3[i] + alpha3[i - 1])
+			alpha1t[temp[i]] = -alpha1[i] + alpha1[i - 1]
+			alpha2t[temp[i]] = -alpha2[i] + alpha2[i - 1]
+			alpha3t[temp[i]] = -alpha3[i] + alpha3[i - 1]
 		
-
 		# Create a text.file	
 		f = open('result.txt', 'w')
-		for i in range(0, len(temp)):
-			f.write(str(temp[i]) + " " +str(alpha1t[i]) + " " +str(alpha2t[i]) + " " + str(alpha3t[i]) + "\n")
+		for t in temp:
+			f.write(str(t) + " " +str(alpha1t[t]) + " " +str(alpha2t[t]) + " " + str(alpha3t[t]) + "\n")
 		f.close()
 		
 		## Create a excel
@@ -122,7 +124,11 @@ class Model:
 		Trmax = 120,
 		Trmin = -100,
 		Tref = 177,
-		Tend = -200):
+		Tend = -200,
+		AlphaL = -1.7954e-06, 
+		AlphaT = 7.3321e-06):
+		
+		self.Tref = Tref
 		
 		#print "Vf %f P0 %f P1 %f P2 %f" % (Vf, P0, P1, P2)
 		#print "AlphaL %f AlphaT" % (AlphaL, AlphaT)
@@ -368,13 +374,8 @@ class Model:
 			numCpus=1, numGPUs=0, queue=None, resultsFormat=ODB, scratch='', type=
 			ANALYSIS, userSubroutine='', waitHours=0, waitMinutes=0)
 	
-	
-	
-
-
-
 model = Model()
-model.Setup(-1.7954e-06, 7.3321e-06)
+model.Setup()
 model.RunJob()
 result = model.GetResult()
 """
